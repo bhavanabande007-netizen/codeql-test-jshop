@@ -40,7 +40,7 @@ jobs:
       if: always()
       run: |
           curl -X POST "${{ secrets.JIRA_BASE_URL }}/rest/api/3/issue" \
-          --user "${{ secrets.JIRA_USER_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}" \
+          --user "${{ secrets.JIRA_USER_EMAIL }}:${{ secrets.JIRA_API_CodeQL_TOKEN }}" \
           --header 'Content-Type: application/json' \
           --data '{
             "fields": {
