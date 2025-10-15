@@ -35,7 +35,6 @@ jobs:
       id: upload
       run: |
           echo "SCAN_RESULTS=$(cat /github/workspace/codeql-results.sarif | base64 -w 0)" >> $GITHUB_ENV
-
     - name: Create Jira issue (demo)
       if: always()
       run: |
