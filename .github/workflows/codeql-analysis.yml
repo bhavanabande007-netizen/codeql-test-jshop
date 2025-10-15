@@ -31,3 +31,40 @@ jobs:
       uses: github/codeql-action/autobuild@v3
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
+    - name: Upload SARIF to variable
+      id: upload
+      run: |
+          echo "SCAN_RESULTS=$(cat /github/workspace/codeql-results.sarif | base64 -w 0)" >> $GITHUB_ENV
+
+    - name: Create Jira issue (demo)
+      if: always()
+      run: |
+          curl -X POST "${{ secrets.JIRA_BASE_URL }}/rest/api/3/issue" \
+          --user "${{ secrets.JIRA_USER_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}" \
+          --header 'Content-Type: application/json' \
+          --data '{
+            "fields": {
+              "project": {
+                "key": "'"${{ secrets.JIRA_PROJECT_KEY }}"'"
+              },
+              "summary": "CodeQL Scan completed - Review required",
+              "description": {
+                "type": "doc",
+                "version": 1,
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "CodeQL scan completed. Review alerts in GitHub."
+                      }
+                    ]
+                  }
+                ]
+              },
+              "issuetype": {
+                "name": "Task"
+              }
+            }
+          }'
